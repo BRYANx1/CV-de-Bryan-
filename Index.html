@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bryan Smith Saldaña Flores — Systems Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #0f1626;
+    --surface2: #151d30;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(0,212,255,0.12);
+    --glow: rgba(0,212,255,0.08);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid rgba(0,212,255,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.2s, height 0.2s;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:1; opacity:0.4;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::after {
+    content:''; position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index: 100;
+    padding: 20px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 600;
+    color: var(--accent); letter-spacing: 2px;
+  }
+  .nav-links { display:flex; gap:36px; }
+  .nav-links a {
+    font-size: 12px; font-weight: 500; letter-spacing: 1.5px;
+    color: var(--muted); text-decoration: none; text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px;
+    background: var(--accent); transform: scaleX(0); transition: transform 0.25s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ── SECTIONS WRAPPER ── */
+  main { position: relative; z-index: 2; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 0 10vw;
+    position: relative;
+  }
+
+  .hero-bg-orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none;
+  }
+  .orb1 { width:500px; height:500px; background:rgba(124,58,237,0.12); top:-100px; right:-100px; }
+  .orb2 { width:400px; height:400px; background:rgba(0,212,255,0.08); bottom:0; left:-80px; }
+
+  .hero-content { max-width: 760px; }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 3px; color: var(--accent);
+    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+    opacity:0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-tag::before {
+    content:''; display:block; width:30px; height:1px; background:var(--accent);
+  }
+
+  h1.hero-name {
+    font-size: clamp(44px, 7vw, 80px);
+    font-weight: 700; line-height: 1.05;
+    letter-spacing: -2px;
+    opacity:0; animation: fadeUp 0.8s 0.35s forwards;
+  }
+  h1.hero-name span { color: var(--accent); }
+
+  .hero-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; color: var(--muted);
+    margin-top: 18px; margin-bottom: 28px;
+    opacity:0; animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-role .typing::after {
+    content:'|'; animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-desc {
+    font-size: 16px; line-height: 1.8; color: #94a3b8;
+    max-width: 560px;
+    opacity:0; animation: fadeUp 0.8s 0.65s forwards;
+  }
+
+  .hero-cta {
+    margin-top: 40px; display:flex; gap: 16px; flex-wrap: wrap;
+    opacity:0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .btn-primary {
+    padding: 14px 32px; background: var(--accent);
+    color: #0a0e1a; font-weight: 700; font-size: 13px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    border: none; cursor: none; text-decoration: none;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: all 0.25s;
+  }
+  .btn-primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,212,255,0.4); }
+  .btn-secondary {
+    padding: 14px 32px; border: 1px solid var(--border);
+    color: var(--text); font-size: 13px; letter-spacing: 1.5px;
+    text-transform: uppercase; cursor: none; text-decoration: none;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: all 0.25s; background: transparent;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--glow); }
+
+  .hero-stats {
+    margin-top: 60px; display:flex; gap:48px;
+    opacity:0; animation: fadeUp 0.8s 0.95s forwards;
+  }
+  .stat-item { }
+  .stat-num {
+    font-size: 36px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+  }
+  .stat-num .counter { display:inline-block; }
+  .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; color: var(--muted);
+    opacity:0; animation: fadeUp 1s 1.4s forwards;
+  }
+  .scroll-line {
+    width:1px; height:50px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollDrop 2s infinite;
+  }
+  @keyframes scrollDrop {
+    0%{transform:scaleY(0); transform-origin:top}
+    50%{transform:scaleY(1); transform-origin:top}
+    51%{transform:scaleY(1); transform-origin:bottom}
+    100%{transform:scaleY(0); transform-origin:bottom}
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px) }
+    to   { opacity:1; transform:translateY(0) }
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 100px 10vw;
+    position: relative;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 12px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .section-label::after {
+    content:''; flex:1; height:1px;
+    background: linear-gradient(to right, var(--border), transparent);
+    max-width: 120px;
+  }
+  .section-title {
+    font-size: clamp(28px, 4vw, 44px); font-weight: 700;
+    letter-spacing: -1px; margin-bottom: 48px;
+  }
+
+  /* ── SKILLS ── */
+  #skills .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  }
+  .skill-card::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, var(--glow), transparent);
+    opacity:0; transition: opacity 0.3s;
+  }
+  .skill-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-4px); }
+  .skill-card:hover::before { opacity:1; }
+  .skill-icon {
+    font-size: 26px; margin-bottom: 14px;
+  }
+  .skill-name {
+    font-weight: 600; font-size: 15px; margin-bottom: 8px;
+  }
+  .skill-bar-wrap {
+    height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 10px;
+  }
+  .skill-bar {
+    height: 100%; background: linear-gradient(to right, var(--accent), var(--accent2));
+    border-radius: 2px; width: 0; transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .skill-level { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* ── EXPERIENCE ── */
+  #experience .timeline {
+    position: relative; padding-left: 28px;
+  }
+  #experience .timeline::before {
+    content:''; position:absolute; left:0; top:8px; bottom:0;
+    width:1px; background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+  .timeline-item {
+    position: relative; padding-bottom: 48px;
+    opacity:0; transform: translateX(-20px);
+    transition: all 0.6s;
+  }
+  .timeline-item.visible { opacity:1; transform: translateX(0); }
+  .timeline-dot {
+    position:absolute; left:-34px; top:6px;
+    width:13px; height:13px; border-radius:50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 12px rgba(0,212,255,0.4);
+  }
+  .timeline-header { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  .timeline-role { font-size:18px; font-weight:700; }
+  .timeline-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent); letter-spacing: 1.5px;
+    background: rgba(0,212,255,0.06);
+    padding: 4px 12px; border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .timeline-company { color: var(--muted); font-size: 13px; margin-top: 4px; margin-bottom: 14px; }
+  .timeline-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 14px; }
+  .tag {
+    font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    padding: 3px 10px; border: 1px solid var(--border);
+    color: var(--muted); letter-spacing: 0.5px;
+  }
+  .timeline-desc { font-size: 14px; line-height: 1.8; color: #94a3b8; }
+
+  /* ── EDUCATION ── */
+  #education .edu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 36px;
+    display:flex; gap:24px; align-items: flex-start;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    transition: border-color 0.3s;
+    margin-bottom: 16px;
+  }
+  #education .edu-card:hover { border-color: rgba(0,212,255,0.3); }
+  .edu-icon { font-size: 36px; flex-shrink:0; }
+  .edu-degree { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .edu-uni { color: var(--accent); font-size: 14px; margin-bottom: 8px; }
+  .edu-meta { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .badge {
+    display:inline-block; margin-top:10px; margin-right:8px;
+    padding: 4px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--accent3);
+  }
+
+  /* ── CONTACT ── */
+  #contact .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    max-width: 600px;
+  }
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    display:flex; align-items:center; gap:16px;
+    transition: border-color 0.3s, transform 0.3s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    text-decoration: none; color: inherit;
+  }
+  .contact-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-3px); }
+  .contact-icon { font-size: 22px; }
+  .contact-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
+  .contact-value { font-size: 14px; font-weight: 500; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px 10vw; text-align:center;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    position: relative; z-index: 2;
+  }
+  footer span { color: var(--accent); }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal { opacity:0; transform:translateY(30px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ── TERMINAL BLOCK ── */
+  .terminal {
+    background: #050810;
+    border: 1px solid var(--border);
+    padding: 20px 24px; margin-top: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.8;
+    max-width: 540px;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+  .term-bar { display:flex; gap:7px; margin-bottom:14px; }
+  .term-dot { width:11px; height:11px; border-radius:50%; }
+  .d1{background:#ff5f57} .d2{background:#febc2e} .d3{background:#28c840}
+  .term-line .prompt { color: var(--accent3); }
+  .term-line .cmd { color: var(--accent); }
+  .term-line .out { color: var(--muted); }
+  .term-cursor { display:inline-block; width:8px; height:14px; background:var(--accent); animation: blink 1s infinite; vertical-align: middle; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display:none; }
+    #hero, .section { padding-left: 6vw; padding-right: 6vw; }
+    .hero-stats { gap: 28px; }
+    #contact .contact-grid { grid-template-columns: 1fr; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">BSF.DEV</div>
+  <div class="nav-links">
+    <a href="#about">Sobre mí</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experiencia</a>
+    <a href="#education">Educación</a>
+    <a href="#contact">Contacto</a>
+  </div>
+</nav>
+
+<main>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-orb orb1"></div>
+  <div class="hero-bg-orb orb2"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Disponible para trabajar</div>
+    <h1 class="hero-name">Bryan Smith<br/><span>Saldaña Flores</span></h1>
+    <p class="hero-role">
+      &gt; <span class="typing" id="typingText"></span>
+    </p>
+    <p class="hero-desc">
+      Estudiante de Ingeniería de Sistemas con experiencia en atención al cliente,
+      caja, docencia y operaciones. Apasionado por la tecnología y el desarrollo
+      de soluciones eficientes. Siempre en modo <span style="color:var(--accent)">learning</span>.
+    </p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">Contáctame</a>
+      <a href="#experience" class="btn-secondary">Ver experiencia</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num"><span class="counter" data-target="3">0</span>+</div>
+        <div class="stat-label">Años de experiencia</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span class="counter" data-target="5">0</span></div>
+        <div class="stat-label">Roles desempeñados</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">T<span style="font-size:20px">op</span></div>
+        <div class="stat-label">10% académico UTP</div>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="term-bar"><div class="term-dot d1"></div><div class="term-dot d2"></div><div class="term-dot d3"></div></div>
+      <div class="term-line"><span class="prompt">bryan@portfolio</span>:<span style="color:#7c3aed">~</span>$ <span class="cmd">python3 about_me.py</span></div>
+      <div class="term-line"><span class="out">// Loading profile...</span></div>
+      <div class="term-line"><span class="out">name     : Bryan Smith Saldaña Flores</span></div>
+      <div class="term-line"><span class="out">age      : 18</span></div>
+      <div class="term-line"><span class="out">location : Lima, Perú 🇵🇪</span></div>
+      <div class="term-line"><span class="out">status   : </span><span style="color:var(--accent3)">Buscando oportunidades ✓</span></div>
+      <div class="term-line"><span class="prompt">bryan@portfolio</span>:<span style="color:#7c3aed">~</span>$ <span class="term-cursor"></span></div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section">
+  <div class="section-label">02 // competencias</div>
+  <h2 class="section-title reveal">Stack & Habilidades</h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">🐍</div>
+      <div class="skill-name">Python</div>
+      <div class="skill-level">Básico-Intermedio</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="60"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">☕</div>
+      <div class="skill-name">Java</div>
+      <div class="skill-level">Básico</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="45"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-name">HTML / CSS</div>
+      <div class="skill-level">Básico</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="50"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🐙</div>
+      <div class="skill-name">Git & GitHub</div>
+      <div class="skill-level">Colaboración en equipo</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="55"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🗄️</div>
+      <div class="skill-name">Bases de datos</div>
+      <div class="skill-level">SQL básico</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="40"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">💡</div>
+      <div class="skill-name">Resolución de problemas</div>
+      <div class="skill-level">Álgebra & Lógica</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="85"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">👥</div>
+      <div class="skill-name">Trabajo en equipo</div>
+      <div class="skill-level">Colaboración técnica</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="90"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🧮</div>
+      <div class="skill-name">Matemática & Álgebra</div>
+      <div class="skill-level">Docente / Avanzado</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="88"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="section">
+  <div class="section-label">03 // trayectoria</div>
+  <h2 class="section-title reveal">Experiencia Laboral</h2>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-header">
+        <div class="timeline-role">Cajero / Atención al Público</div>
+        <div class="timeline-date">2025 — 2026</div>
+                                                                                                                 </div>
